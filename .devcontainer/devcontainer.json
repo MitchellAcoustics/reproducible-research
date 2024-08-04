@@ -1,7 +1,11 @@
 {
   "name": "Research Environment",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "args": {
+      "PYTHON_VERSION": "3.12",
+      "R_VERSION": "4.4.1"
+    }
   },
   "customizations": {
     "vscode": {
@@ -11,24 +15,41 @@
         "quarto.quarto-vscode",
         "James-Yu.latex-workshop",
         "nvarner.typst-lsp",
-        "ms-toolsai.jupyter"
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker",
+        "GitHub.copilot",
+        "eamodio.gitlens",
+        "ms-vscode-remote.remote-containers"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
         "r.rpath.linux": "/usr/local/bin/R",
-        "r.rterm.linux": "/usr/local/bin/R"
+        "r.rterm.linux": "/usr/local/bin/R",
+        "editor.formatOnSave": true,
+        "python.formatting.provider": "black",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "r.lsp.enabled": true,
+        "terminal.integrated.defaultProfile.linux": "zsh"
       }
     }
   },
   "remoteUser": "vscode",
-  "postCreateCommand": "sudo chown -R vscode:vscode /workspace && bash .devcontainer/setup_env.sh && bash .devcontainer/test_devcontainer_setup.sh",
+  "updateRemoteUserUID": true,
+  "postCreateCommand": "bash .devcontainer/setup_env.sh && bash .devcontainer/test_devcontainer_setup.sh",
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "source=venv-${localWorkspaceFolderBasename},target=/workspace/.venv,type=volume",
-    "source=renv-${localWorkspaceFolderBasename},target=/workspace/renv,type=volume"
+    "source=renv-${localWorkspaceFolderBasename},target=/workspace/renv,type=volume",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached"
   ],
   "remoteEnv": {
     "PYTHONPATH": "/workspace/src/python:${containerEnv:PYTHONPATH}",
-    "R_LIBS_USER": "/home/vscode/R/library"
+    "R_LIBS_USER": "/home/vscode/R/library",
+    "RENV_PATHS_ROOT": "/home/vscode/.renv",
+    "RENV_PATHS_LIBRARY": "/workspace/.renv/library"
+  },
+  "features": {
+    // "ghcr.io/devcontainers/features/github-cli:1": {}
   }
 }

@@ -44,8 +44,8 @@ run_test "LaTeX installation" "latex --version"
 run_test "Typst installation" "typst --version"
 
 # Test environment variables
-run_test "PYTHONPATH set correctly" "grep -q PYTHONPATH .env"
-run_test "R_LIBS_USER set correctly" "grep -q R_LIBS_USER .env"
+run_test "PYTHONPATH set correctly" "grep -q PYTHONPATH .venv"
+run_test "R_LIBS_USER set correctly" "grep -q R_LIBS_USER renv"
 
 # Print summary
 echo "==== Test Summary ===="
