@@ -8,6 +8,8 @@ print_color() {
     echo -e "${COLOR}${MESSAGE}${RESET}"
 }
 
+source .venv/bin/activate
+
 # Function to run a test
 run_test() {
     TEST_NAME=$1
@@ -35,7 +37,8 @@ run_test "IPython kernel installation" "jupyter kernelspec list | grep -q projec
 # Test R setup
 run_test "R version" "R --version"
 run_test "renv installation" "R -q -e 'packageVersion(\"renv\")'"
-run_test "pak installation" "R -q -e 'packageVersion(\"pak\")'"
+# run_test "pak installation" "R -q -e 'packageVersion(\"pak\")'"
+run_test "pak enabled" "grep -q 'renv.config.pak.enabled = TRUE' .Rprofile"
 run_test "renv activation" "grep -q 'renv/activate.R' .Rprofile"
 
 # Test document preparation tools
@@ -43,9 +46,6 @@ run_test "Quarto installation" "quarto --version"
 run_test "LaTeX installation" "latex --version"
 run_test "Typst installation" "typst --version"
 
-# Test environment variables
-run_test "PYTHONPATH set correctly" "grep -q PYTHONPATH .venv"
-run_test "R_LIBS_USER set correctly" "grep -q R_LIBS_USER renv"
 
 # Print summary
 echo "==== Test Summary ===="

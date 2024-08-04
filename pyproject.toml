@@ -1,0 +1,22 @@
+[project]
+name = "reproducible-research"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Andrew Mitchell", email = "a.j.mitchell@ucl.ac.uk" }
+]
+dependencies = [
+    "numpy>=2.0.1",
+    "scipy>=1.14.0",
+    "matplotlib>=3.9.1",
+    "pandas>=2.2.2",
+    "seaborn>=0.13.2",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+license = { text = "BSD-3-Clause" }
+
+[tool.rye]
+managed = true
+virtual = true
+dev-dependencies = []

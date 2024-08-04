@@ -19,7 +19,8 @@
         "ms-azuretools.vscode-docker",
         "GitHub.copilot",
         "eamodio.gitlens",
-        "ms-vscode-remote.remote-containers"
+        "ms-vscode-remote.remote-containers",
+        "quarto.quarto"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/workspace/.venv/bin/python",

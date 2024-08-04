@@ -54,7 +54,7 @@ fi
 # R setup
 if command_exists R; then
     echo "Setting up R environment..."
-    
+
     # Initialize renv if renv.lock exists, otherwise create a new project
     if [ -f "renv.lock" ]; then
         echo "Existing renv.lock found. Restoring packages..."
