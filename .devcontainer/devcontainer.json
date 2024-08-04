@@ -1,0 +1,34 @@
+{
+  "name": "Research Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "REditorSupport.r",
+        "quarto.quarto-vscode",
+        "James-Yu.latex-workshop",
+        "nvarner.typst-lsp",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
+        "r.rpath.linux": "/usr/local/bin/R",
+        "r.rterm.linux": "/usr/local/bin/R"
+      }
+    }
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "sudo chown -R vscode:vscode /workspace && bash .devcontainer/setup_env.sh && bash .devcontainer/test_devcontainer_setup.sh",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=venv-${localWorkspaceFolderBasename},target=/workspace/.venv,type=volume",
+    "source=renv-${localWorkspaceFolderBasename},target=/workspace/renv,type=volume"
+  ],
+  "remoteEnv": {
+    "PYTHONPATH": "/workspace/src/python:${containerEnv:PYTHONPATH}",
+    "R_LIBS_USER": "/home/vscode/R/library"
+  }
+}
