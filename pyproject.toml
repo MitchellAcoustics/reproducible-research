@@ -8,9 +8,11 @@ authors = [
 dependencies = [
     "numpy>=2.0.1",
     "scipy>=1.14.0",
-    "matplotlib>=3.9.1",
+    "matplotlib>=3.9.0",
     "pandas>=2.2.2",
     "seaborn>=0.13.2",
+    "jupyter>=1.0.0",
+    "ipykernel>=6.29.5",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
@@ -19,4 +21,6 @@ license = { text = "BSD-3-Clause" }
 [tool.rye]
 managed = true
 virtual = true
-dev-dependencies = []
+dev-dependencies = [
+    "pytest>=8.3.2",
+]

@@ -11,6 +11,7 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
+        "ms-python.vscode-pylance",
         "REditorSupport.r",
         "quarto.quarto-vscode",
         "James-Yu.latex-workshop",
@@ -23,34 +24,30 @@
         "quarto.quarto"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
+        "python.defaultInterpreterPath": "/opt/python_env/shims/python",
         "r.rpath.linux": "/usr/local/bin/R",
         "r.rterm.linux": "/usr/local/bin/R",
         "editor.formatOnSave": true,
         "python.formatting.provider": "black",
         "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true,
         "r.lsp.enabled": true,
         "terminal.integrated.defaultProfile.linux": "zsh"
       }
     }
   },
-  "remoteUser": "vscode",
-  "updateRemoteUserUID": true,
-  "postCreateCommand": "bash .devcontainer/setup_env.sh && bash .devcontainer/test_devcontainer_setup.sh",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {},
+    "ghcr.io/rocker-org/devcontainer-features/renv-cache:0": {}
+  },
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
-    "source=venv-${localWorkspaceFolderBasename},target=/workspace/.venv,type=volume",
-    "source=renv-${localWorkspaceFolderBasename},target=/workspace/renv,type=volume",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached"
   ],
   "remoteEnv": {
     "PYTHONPATH": "/workspace/src/python:${containerEnv:PYTHONPATH}",
-    "R_LIBS_USER": "/home/vscode/R/library",
-    "RENV_PATHS_ROOT": "/home/vscode/.renv",
-    "RENV_PATHS_LIBRARY": "/workspace/.renv/library"
+    "R_LIBS_USER": "/opt/r_env",
+    "RENV_PATHS_ROOT": "/opt/r_env",
+    "RENV_PATHS_LIBRARY": "/opt/r_env/library",
+    "RYE_HOME": "/opt/python_env"
   },
-  "features": {
-    // "ghcr.io/devcontainers/features/github-cli:1": {}
-  }
+  "postCreateCommand": "bash .devcontainer/setup_env.sh && bash .devcontainer/test_devcontainer_setup.sh"
 }

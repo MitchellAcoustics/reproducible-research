@@ -25,12 +25,8 @@ trap 'handle_error ${LINENO} $?' ERR
 
 log "Starting environment setup..."
 
-# Ensure Rye environment is loaded
-source "$HOME/.rye/env"
-
 # Python setup
 log "Setting up Python environment..."
-export RYE_HOME="/opt/python_env"
 
 setup_python_env() {
     if [ -f "pyproject.toml" ]; then
@@ -74,12 +70,6 @@ setup_python_env() {
         fi
     fi
 
-    # Install the kernel
-    if ! python -m ipykernel install --prefix=/usr/local --name=project_kernel; then
-        log "Error: Failed to install the project kernel."
-        return 1
-    fi
-
     return 0
 }
 
@@ -92,7 +82,6 @@ log "Python environment setup complete."
 
 # R setup
 log "Setting up R environment..."
-export R_LIBS_USER="/opt/r_env"
 
 setup_r_env() {
     if [ -f "renv.lock" ]; then
