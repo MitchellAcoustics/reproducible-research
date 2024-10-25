@@ -1,0 +1,28 @@
+project:
+  type: manuscript
+  output-dir: drafts
+
+manuscript:
+  article: paper.qmd
+  # notebooks:
+  #   - notebook1.ipynb
+  #   - notebook2.ipynb
+
+format:
+  html:
+    embed-resources: true
+    self-contained-math: true
+    output-file: paper.html
+    comments:
+      hypothesis: true
+  docx: default
+  jats: default
+  # pdf: default
+  typst: default
+
+  # (other formats)
+  # pdf: default
+
+execute:
+  freeze: true
+
