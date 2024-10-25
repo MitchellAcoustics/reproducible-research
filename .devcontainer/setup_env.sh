@@ -30,6 +30,7 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+
 # Python setup
 log "Setting up Python environment..."
 export UV_HOME="/opt/python_env"
@@ -43,7 +44,7 @@ setup_python_env() {
         if command_exists uv; then
             log "Using uv for environment management."
             uv sync
-            uv add ipykernel
+            uv add ipykernel jupyter
             uv run python -m ipykernel install --user --name=project_kernel
         fi
     elif [ -f ".venv/pyvenv.cfg" ]; then
@@ -52,19 +53,19 @@ setup_python_env() {
         if [ -f "requirements.txt" ]; then
             uv pip install -r requirements.txt
         fi
-        uv pip install ipykernel
+        uv pip install ipykernel jupyter
         python -m ipykernel install --user --name=project_kernel
     elif [ -f "requirements.txt" ]; then
         echo "requirements.txt found. Creating new environment with uv."
         uv venv
         source .venv/bin/activate
         uv pip install -r requirements.txt
-        uv pip install ipykernel
+        uv pip install ipykernel jupyter
         python -m ipykernel install --user --name=project_kernel
     else
         echo "No Python environment configuration found. Creating a basic environment."
         uv init --app --no-readme --no-workspace
-        uv add ipykernel
+        uv add ipykernel jupyter
         uv run python -m ipykernel install --user --name=project_kernel
         rm hello.py
     fi
@@ -93,7 +94,8 @@ setup_r_env() {
         R --quiet -e "renv::init()"
         R --quiet -e "renv::install(c('pak'))"
         log "Install other R packages."
-        R --quiet -e "renv::install(c('yaml', 'languageserver'))"
+        R --quiet -e "renv::install(c('yaml', 'languageserver', 'knitr', 'rmarkdown'))"
+        R --quiet -e "renv::snapshot()"
     fi
 
     return 0

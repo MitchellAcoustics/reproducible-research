@@ -15,16 +15,32 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     jq \
     xz-utils \
-    texlive-base \
-    texlive-latex-extra \
-    texlive-fonts-recommended \
-    texlive-publishers \
-    texlive-science \
+    # texlive-base \
+    # texlive-latex-extra \
+    # texlive-fonts-recommended \
+    # texlive-publishers \
+    # texlive-science \
+    pandoc \ 
+    libicu-dev \
+    libxml2-dev \
     sudo \
     zsh \
     fonts-powerline \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
+
+# tlmgr setup
+# RUN curl -L -o install-tl-unx.tar.gz https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+# RUN zcat < install-tl-unx.tar.gz | tar xf -
+# RUN cd install-tl-*
+# RUN perl ./install-tl --no-interaction
+# RUN export PATH=/usr/local/texlive/2024/bin/x86_64-linux:$PATH
+# RUN tlmgr init-usertree
+RUN wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh
+
+# ENV PATH="/usr/local/texlive/2024/bin/x86_64-linux:${PATH}"
+ENV PATH="/root/bin:${PATH}"
+RUN tlmgr init-usertree
 
 # Install Quarto
 RUN ARCH=$(dpkg --print-architecture) && \

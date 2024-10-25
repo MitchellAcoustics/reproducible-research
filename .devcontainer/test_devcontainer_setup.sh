@@ -42,7 +42,7 @@ run_test "pak installation" "R -q -e 'packageVersion(\"pak\")'"
 run_test "renv activation" "grep -q 'renv/activate.R' .Rprofile"
 
 # Test document preparation tools
-run_test "Quarto installation" "quarto --version"
+run_test "Quarto installation" "quarto check"
 run_test "LaTeX installation" "latex --version"
 run_test "Typst installation" "typst --version"
 
