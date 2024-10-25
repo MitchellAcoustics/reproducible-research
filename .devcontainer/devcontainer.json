@@ -11,12 +11,13 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
         "REditorSupport.r",
         "quarto.quarto-vscode",
         "James-Yu.latex-workshop",
         "nvarner.typst-lsp",
         "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-renderers",
         "ms-azuretools.vscode-docker",
         "GitHub.copilot",
         "eamodio.gitlens",
@@ -24,14 +25,26 @@
         "quarto.quarto"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/opt/python_env/shims/python",
         "r.rpath.linux": "/usr/local/bin/R",
         "r.rterm.linux": "/usr/local/bin/R",
         "editor.formatOnSave": true,
-        "python.formatting.provider": "black",
-        "python.linting.enabled": true,
         "r.lsp.enabled": true,
-        "terminal.integrated.defaultProfile.linux": "zsh"
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        // ruff settings
+        "[python]": {
+          "defaultInterpreterPath": "/workspace/.venv/bin/python",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          },
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "notebook.formatOnSave.enabled": true,
+        "notebook.codeActionsOnSave": {
+          "notebook.source.fixAll": "explicit",
+          "notebook.source.organizeImports": "explicit"
+        }
       }
     }
   },
@@ -47,7 +60,7 @@
     "R_LIBS_USER": "/opt/r_env",
     "RENV_PATHS_ROOT": "/opt/r_env",
     "RENV_PATHS_LIBRARY": "/opt/r_env/library",
-    "RYE_HOME": "/opt/python_env"
+    "UV_HOME": "/opt/python_env"
   },
   "postCreateCommand": "bash .devcontainer/setup_env.sh && bash .devcontainer/test_devcontainer_setup.sh"
 }

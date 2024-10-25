@@ -25,62 +25,49 @@ trap 'handle_error ${LINENO} $?' ERR
 
 log "Starting environment setup..."
 
-# Ensure Rye environment is loaded
-source "$HOME/.rye/env"
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
 
 # Python setup
 log "Setting up Python environment..."
-export RYE_HOME="/opt/python_env"
+export UV_HOME="/opt/python_env"
 
 setup_python_env() {
+    # Python setup
+    echo "Setting up Python environment..."
+
     if [ -f "pyproject.toml" ]; then
-        log "pyproject.toml found. Using Rye for environment setup."
-        if ! rye sync; then
-            log "Error: Failed to sync Python environment with Rye."
-            return 1
+        echo "uv project detected."
+        if command_exists uv; then
+            log "Using uv for environment management."
+            uv sync
+            uv add ipykernel
+            uv run python -m ipykernel install --user --name=project_kernel
         fi
-    elif [ -f "requirements.lock" ]; then
-        log "requirements.lock found. Setting up venv with locked dependencies."
-        rye init . --virtual
+    elif [ -f ".venv/pyvenv.cfg" ]; then
+        echo "Existing venv detected. Assuming uv was used."
         source .venv/bin/activate
-        if ! rye sync; then
-            log "Error: Failed to install dependencies from requirements.lock."
-            return 1
+        if [ -f "requirements.txt" ]; then
+            uv pip install -r requirements.txt
         fi
+        uv pip install ipykernel
+        python -m ipykernel install --user --name=project_kernel
     elif [ -f "requirements.txt" ]; then
-        log "requirements.txt found. Setting up venv with listed dependencies."
-        rye init . --virtual
+        echo "requirements.txt found. Creating new environment with uv."
+        uv venv
         source .venv/bin/activate
-        if ! uv pip install -r requirements.txt; then
-            log "Error: Failed to install dependencies from requirements.txt."
-            return 1
-        fi
+        uv pip install -r requirements.txt
+        uv pip install ipykernel
+        python -m ipykernel install --user --name=project_kernel
     else
-        log "No Python project files found. Setting up a basic environment."
-        rye init . --virtual
-        if ! rye add jupyter ipykernel numpy pandas matplotlib; then
-            log "Error: Failed to install basic packages."
-            return 1
-        fi
-        rye sync
-        source .venv/bin/activate
+        echo "No Python environment configuration found. Creating a basic environment."
+        uv init --app --no-readme --no-workspace
+        uv add ipykernel
+        uv run python -m ipykernel install --user --name=project_kernel
+        rm hello.py
     fi
-
-    # Install Jupyter and ipykernel if not already installed
-    if ! python -m pip list | grep -q jupyter; then
-        if ! rye add jupyter ipykernel; then
-            log "Error: Failed to install Jupyter and ipykernel."
-            return 1
-        fi
-    fi
-
-    # Install the kernel
-    if ! python -m ipykernel install --prefix=/usr/local --name=project_kernel; then
-        log "Error: Failed to install the project kernel."
-        return 1
-    fi
-
-    return 0
 }
 
 if ! setup_python_env; then
@@ -102,11 +89,11 @@ setup_r_env() {
             return 1
         fi
     else
-        log "No renv.lock found. Initializing new renv project."
-        if ! R --quiet -e "renv::init()"; then
-            log "Error: Failed to initialize renv project."
-            return 1
-        fi
+        log "No renv.lock found. Initializing new renv project..."
+        R --quiet -e "renv::init()"
+        R --quiet -e "renv::install(c('pak'))"
+        log "Install other R packages."
+        R --quiet -e "renv::install(c('yaml', 'languageserver'))"
     fi
 
     return 0

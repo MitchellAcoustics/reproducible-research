@@ -7,8 +7,8 @@ ARG PYTHON_VERSION=3.12
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-pip \
-    python3-venv \
+    # python3-pip \
+    # python3-venv \
     git \ 
     curl \
     libcurl4-openssl-dev \
@@ -47,14 +47,8 @@ RUN ARCH=$(dpkg --print-architecture) && \
     rm -rf typst-${TYPST_ARCH}-unknown-linux-musl*
 
 # Install UV
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+RUN curl -LsSf https://astral.sh/uv/0.4.6/install.sh | sh && \
     mv /root/.cargo/bin/uv /usr/local/bin/uv
-
-# Install Rye and set up global shims
-RUN curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes" bash && \
-    echo 'source "$HOME/.rye/env"' >> ~/.bashrc && \
-    /root/.rye/shims/rye config --set-bool behavior.global-python=true && \
-    /root/.rye/shims/rye config --set-bool behavior.use-uv=true
 
 # Configure Git
 RUN git config --system core.autocrlf input
@@ -64,16 +58,35 @@ RUN mkdir -p /opt/python_env /opt/r_env
 
 # Set up environment variables
 ENV PATH="/usr/local/bin:/root/.rye/shims:${PATH}" \
-    RYE_HOME="/opt/python_env"
-# R_LIBS_USER="/opt/r_env" \
-# RENV_PATHS_ROOT="/opt/r_env" \
-# RENV_PATHS_LIBRARY="/opt/r_env/library" \
+    UV_HOME="/opt/python_env" \
+    R_LIBS_USER="/opt/r_env" \
+    RENV_PATHS_ROOT="/opt/r_env" \
+    RENV_PATHS_LIBRARY="/opt/r_env/library" 
+
+RUN uv python install ${PYTHON_VERSION}
 
 # Install renv
 RUN R --quiet -e "install.packages('renv', repos = 'https://cloud.r-project.org/')"
 
-# Set zsh as the default shell
-SHELL ["/bin/zsh", "-c"]
+# Configure renv
+# approach one https://rstudio.github.io/renv/articles/docker.html
+ENV RENV_SETTINGS_USE_CACHE FALSE
+ENV RENV_CONFIG_PAK_ENABLED TRUE
+
+# Install oh-my-zsh and plugins
+USER $USERNAME
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
+    && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions \
+    && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# Configure zsh
+RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/' ~/.zshrc \
+    && sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc \
+    && echo 'export TERM=xterm-256color' >> ~/.zshrc
+
+# Set zsh as the default shell for vscode user
+USER root
+RUN chsh -s /usr/bin/zsh $USERNAME
 
 # Set the working directory
 WORKDIR /workspace
