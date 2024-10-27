@@ -44,13 +44,13 @@ This repository contains a devcontainer configuration for a reproducible researc
 1. Ensure you have Docker and VSCode with the Remote - Containers extension installed.
 2. Clone this repository.
 3. Open the repository in VSCode.
-4. When prompted, click "Reopen in Container".
-5. Wait for the container to build and start. This may take several minutes the first time.
+4. Set your preferred Python and R versions in the `devcontainer.json`. Also choose whether the devcontainer should automatically setup renv and uv environments.
+5. When prompted, click "Reopen in Container".
+6. Wait for the container to build and start. This may take several minutes the first time.
 
 ## Customization
 
 - You can modify the Python and R versions by changing the build arguments in the Dockerfile.
-- Additional system packages can be added to the Dockerfile.
 - VSCode settings and extensions can be modified in the `devcontainer.json` file.
 
 ## Contributing
