@@ -25,7 +25,8 @@
         "ms-toolsai.jupyter-renderers",
         "ms-azuretools.vscode-docker",
         "GitHub.copilot",
-        "eamodio.gitlens",
+        "ms-vscode.live-server",
+        // "eamodio.gitlens",
         "ms-vscode-remote.remote-containers",
         "quarto.quarto"
       ],
