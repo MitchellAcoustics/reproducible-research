@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# This script sets up the Python and R environments for the project.
+
+python_version=${python_version:-3.10}
+setup_uv=${setup_uv:-true}
+r_version=${r_version:-4.4.1}
+setup_renv=${setup_renv:-true}
+
+while [ $# -gt 0 ]; do
+
+   if [[ $1 == *"--"* ]]; then
+        param="${1/--/}"
+        declare $param="$2"
+   fi
+
+  shift
+done
+
+if [ f ".python-version" ]; then
+    python_version=$(cat .python-version)
+fi
+
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -64,48 +85,54 @@ setup_python_env() {
         python -m ipykernel install --user --name=project_kernel
     else
         echo "No Python environment configuration found. Creating a basic environment."
-        uv init --app --no-readme --no-workspace
+        uv python install $python_version
+        uv python pin $python_version
+        uv init --app --no-readme --no-workspace --python $python_version
         uv add ipykernel jupyter
         uv run python -m ipykernel install --user --name=project_kernel
         rm hello.py
     fi
 }
 
-if ! setup_python_env; then
-    log "Python environment setup failed."
-    exit 1
+if [ "$setup_uv" = true ]; then
+    if ! setup_python_env; then
+        log "Python environment setup failed."
+        exit 1
+    fi
 fi
 
 log "Python environment setup complete."
 
-# R setup
-log "Setting up R environment..."
-export R_LIBS_USER="/opt/r_env"
+if [ "$setup_renv" = true ]; then
+    # R setup
+    log "Setting up R environment..."
+    export R_LIBS_USER="/opt/r_env"
 
-setup_r_env() {
-    if [ -f "renv.lock" ]; then
-        log "renv.lock found. Restoring R environment."
-        if ! R --quiet -e "renv::restore()"; then
-            log "Error: Failed to restore R environment with renv."
-            return 1
+    setup_r_env() {
+        if [ -f "renv.lock" ]; then
+            log "renv.lock found. Restoring R environment."
+            if ! R --quiet -e "renv::restore()"; then
+                log "Error: Failed to restore R environment with renv."
+                return 1
+            fi
+        else
+            log "No renv.lock found. Initializing new renv project..."
+            R --quiet -e "renv::init()"
+            R --quiet -e "renv::install(c('pak'))"
+            log "Install other R packages."
+            R --quiet -e "renv::install(c('yaml', 'languageserver', 'knitr', 'rmarkdown'))"
+            R --quiet -e "renv::snapshot()"
         fi
-    else
-        log "No renv.lock found. Initializing new renv project..."
-        R --quiet -e "renv::init()"
-        R --quiet -e "renv::install(c('pak'))"
-        log "Install other R packages."
-        R --quiet -e "renv::install(c('yaml', 'languageserver', 'knitr', 'rmarkdown'))"
-        R --quiet -e "renv::snapshot()"
+
+        return 0
+    }
+
+    if ! setup_r_env; then
+        log "R environment setup failed."
+        exit 1
     fi
 
-    return 0
-}
-
-if ! setup_r_env; then
-    log "R environment setup failed."
-    exit 1
+    log "R environment setup complete."
 fi
-
-log "R environment setup complete."
 
 log "Environment setup completed successfully!"

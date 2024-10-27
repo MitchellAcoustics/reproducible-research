@@ -1,0 +1,6 @@
+.venv
+# renv
+renv/library/
+renv/python/
+renv/staging/
+.renv

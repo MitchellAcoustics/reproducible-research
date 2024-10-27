@@ -17,8 +17,8 @@ format:
       hypothesis: true
   docx: default
   jats: default
-  # pdf: default
-  typst: default
+  pdf: default
+  # typst: default
 
   # (other formats)
   # pdf: default
