@@ -10,7 +10,10 @@
     "R_LIBS_USER": "/opt/r_env",
     "RENV_PATHS_ROOT": "/opt/r_env",
     "RENV_PATHS_LIBRARY": "/opt/r_env/library",
-    "UV_HOME": "/opt/python_env"
+    "UV_HOME": "/opt/python_env",
+    "UV_LINK_MODE": "copy",
+    "VIRTUAL_ENV": "/opt/.venv",
+    "UV_PROJECT_ENVIRONMENT": "/opt/.venv"
   },
   "customizations": {
     "vscode": {
